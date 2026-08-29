@@ -21,12 +21,12 @@ app.use(
 );
 app.use(express.json());
 
-app.use(async (req, res) => {
+app.use(async (req, res, next) => {
   try {
     await connectDB();
-    // next();
+    next();
   } catch (error) {
-    // next(error);
+    next(error);
   }
 });
 
