@@ -8,18 +8,31 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import itemRoutes from "./routes/itemRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
-import uploadRoutes from './routes/uploadRoutes.js';
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL, "http://localhost:5173"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-  }),
+  })
 );
+
 app.use(express.json());
 
 app.use(async (req, res, next) => {
@@ -41,7 +54,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
-app.use('/api/upload', uploadRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.use(errorHandler);
 
