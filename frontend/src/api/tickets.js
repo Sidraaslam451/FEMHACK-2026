@@ -3,6 +3,7 @@ import api from './axios.js';
 export const createTicket = (data) => api.post('/api/tickets', data);
 export const getTickets = () => api.get('/api/tickets');
 export const getTicketById = (id) => api.get(`/api/tickets/${id}`);
+export const updateTicket = (id, data) => api.put(`/api/tickets/${id}`, data);
 export const assignTicket = (id) => api.patch(`/api/tickets/${id}/assign`);
 export const updateTicketStatus = (id, status) =>
   api.patch(`/api/tickets/${id}/status`, { status });

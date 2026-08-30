@@ -5,11 +5,13 @@ import {
   createTicket,
   getTickets,
   getTicketById,
+  updateTicket,
   assignTicket,
   updateTicketStatus,
   resolveTicket,
   reopenTicket,
   reviewAiSuggestion,
+
 } from '../controllers/ticketController.js';
 import { addMessage, getMessages } from '../controllers/messageController.js';
 
@@ -26,6 +28,7 @@ router.patch('/:id/status', authorize('agent', 'admin'), updateTicketStatus);
 router.patch('/:id/resolve', authorize('agent', 'admin'), resolveTicket);
 router.patch('/:id/reopen', authorize('agent', 'admin'), reopenTicket);
 router.patch('/:id/review-ai', authorize('agent', 'admin'), reviewAiSuggestion);
+router.route('/:id').get(getTicketById).put(updateTicket);
 
 router.route('/:ticketId/messages').post(addMessage).get(getMessages);
 

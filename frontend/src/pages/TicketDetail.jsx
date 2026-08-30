@@ -9,6 +9,7 @@ import {
   resolveTicket,
   reopenTicket,
   reviewAiSuggestion,
+  updateTicket,
 } from '../api/tickets.js';
 import { useAuth } from '../context/useAuth.js';
 
@@ -45,6 +46,12 @@ const TicketDetail = () => {
   const [actionError, setActionError] = useState('');
   const messagesEndRef = useRef(null);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editSubject, setEditSubject] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editCategory, setEditCategory] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
+
   const isAgent = user?.role === 'agent' || user?.role === 'admin';
 
   const loadTicket = async () => {
@@ -53,6 +60,9 @@ const TicketDetail = () => {
       setTicket(res.data.data);
       setReviewCategory(res.data.data.category);
       setReviewPriority(res.data.data.priority);
+      setEditSubject(res.data.data.subject);
+      setEditDescription(res.data.data.description);
+      setEditCategory(res.data.data.category);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load ticket');
     }
@@ -153,6 +163,25 @@ const TicketDetail = () => {
     }
   };
 
+  const handleUpdateTicket = async (e) => {
+    e.preventDefault();
+    setSavingEdit(true);
+    setActionError('');
+    try {
+      await updateTicket(id, {
+        subject: editSubject,
+        description: editDescription,
+        category: editCategory,
+      });
+      setIsEditing(false);
+      await loadTicket();
+    } catch (err) {
+      setActionError(err.response?.data?.message || 'Failed to update ticket');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
@@ -180,19 +209,82 @@ const TicketDetail = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-        <div className="flex justify-between items-start mb-2">
-          <h1 className="text-xl font-bold">{ticket.subject}</h1>
-          <span className={`text-xs px-2 py-1 rounded-full ${statusColors[ticket.status]}`}>
-            {ticket.status}
-          </span>
-        </div>
-        <p className="text-sm text-gray-500 mb-3">
-          {ticket.ticketNumber} · {ticket.category} · {ticket.priority}
-        </p>
-        <p className="text-gray-700 mb-3">{ticket.description}</p>
-        <p className="text-xs text-gray-400">
-          Customer: {ticket.customer?.name} · Agent: {ticket.assignedAgent?.name || 'Unassigned'}
-        </p>
+        {isEditing ? (
+          <form onSubmit={handleUpdateTicket} className="space-y-3">
+            <div>
+              <label className="block text-xs font-medium mb-1">Subject</label>
+              <input
+                type="text"
+                value={editSubject}
+                onChange={(e) => setEditSubject(e.target.value)}
+                className="w-full border p-2 rounded text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1">Description</label>
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                rows={4}
+                className="w-full border p-2 rounded text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1">Category</label>
+              <select
+                value={editCategory}
+                onChange={(e) => setEditCategory(e.target.value)}
+                className="w-full border p-2 rounded text-sm"
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={savingEdit}
+                className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+              >
+                {savingEdit ? 'Saving...' : 'Save Changes'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            <div className="flex justify-between items-start mb-2">
+              <h1 className="text-xl font-bold">{ticket.subject}</h1>
+              <span className={`text-xs px-2 py-1 rounded-full ${statusColors[ticket.status]}`}>
+                {ticket.status}
+              </span>
+            </div>
+            <p className="text-sm text-gray-500 mb-3">
+              {ticket.ticketNumber} · {ticket.category} · {ticket.priority}
+            </p>
+            <p className="text-gray-700 mb-3">{ticket.description}</p>
+            <p className="text-xs text-gray-400 mb-3">
+              Customer: {ticket.customer?.name} · Agent: {ticket.assignedAgent?.name || 'Unassigned'}
+            </p>
+            {!isAgent && ticket.status !== 'Resolved' && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Edit Ticket
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       {actionError && (

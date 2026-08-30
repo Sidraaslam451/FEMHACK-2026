@@ -305,3 +305,56 @@ export const reviewAiSuggestion = async (req, res, next) => {
     next(error);
   }
 };
+
+// backend/src/controllers/ticketController.js mein ye naya function add karo
+export const updateTicket = async (req, res, next) => {
+  try {
+    const { subject, description, category } = req.body;
+
+    const ticket = await Ticket.findById(req.params.id);
+
+    if (!ticket) {
+      const err = new Error('Ticket not found');
+      err.statusCode = 404;
+      throw err;
+    }
+
+    const isOwner = ticket.customer.toString() === req.user._id.toString();
+
+    if (req.user.role === 'customer' && !isOwner) {
+      const err = new Error('Not authorized to update this ticket');
+      err.statusCode = 403;
+      throw err;
+    }
+
+    if (ticket.status === 'Resolved') {
+      const err = new Error('Resolved ticket cannot be updated. Reopen it first.');
+      err.statusCode = 400;
+      throw err;
+    }
+
+    if (subject) ticket.subject = subject;
+    if (description) ticket.description = description;
+    if (category) ticket.category = category;
+
+    if (subject || description) {
+      const aiResult = await triageTicket(
+        ticket.subject,
+        ticket.description
+      );
+      ticket.aiSuggestion = {
+        category: aiResult.category,
+        priority: aiResult.priority,
+        summary: aiResult.summary,
+        generatedAt: new Date(),
+        failed: aiResult.failed,
+      };
+    }
+
+    await ticket.save();
+
+    res.status(200).json({ success: true, data: ticket });
+  } catch (error) {
+    next(error);
+  }
+};
