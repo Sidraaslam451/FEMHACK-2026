@@ -5,7 +5,9 @@ import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
-import Board from './pages/Board.jsx';
+import CreateTicket from './pages/CreateTicket.jsx';
+import MyTickets from './pages/MyTickets.jsx';
+import TicketDetail from './pages/TicketDetail.jsx';
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
           <Route
             path="/dashboard"
             element={
@@ -23,11 +26,30 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
-            path="/board"
+            path="/new-ticket"
             element={
               <ProtectedRoute>
-                <Board />
+                <CreateTicket />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/my-tickets"
+            element={
+              <ProtectedRoute>
+                <MyTickets />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/tickets/:id"
+            element={
+              <ProtectedRoute>
+                <TicketDetail />
               </ProtectedRoute>
             }
           />

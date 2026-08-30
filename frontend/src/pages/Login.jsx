@@ -9,17 +9,17 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      const res = await login(email, password);
+      const role = res.user.role;
+      navigate(role === 'customer' ? '/my-tickets' : '/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     }
   };
-
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-80">
