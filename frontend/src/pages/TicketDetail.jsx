@@ -480,5 +480,5 @@ const TicketDetail = () => {
     </div>
   );
 };
-
+//
 export default TicketDetail;
