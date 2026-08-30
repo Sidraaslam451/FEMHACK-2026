@@ -9,6 +9,8 @@ import authRoutes from "./routes/authRoutes.js";
 import itemRoutes from "./routes/itemRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import ticketRoutes from './routes/ticketRoutes.js';
+
 
 dotenv.config();
 
@@ -55,6 +57,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 app.use(errorHandler);
 
