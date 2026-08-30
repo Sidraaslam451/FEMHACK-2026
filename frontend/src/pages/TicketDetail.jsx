@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   getTicketById,
   getMessages,
@@ -10,17 +10,17 @@ import {
   reopenTicket,
   reviewAiSuggestion,
   updateTicket,
-} from '../api/tickets.js';
-import { useAuth } from '../context/useAuth.js';
+} from "../api/tickets.js";
+import { useAuth } from "../context/useAuth.js";
 
-const CATEGORIES = ['Billing', 'Technical', 'General', 'Account', 'Other'];
-const PRIORITIES = ['Low', 'Medium', 'High'];
+const CATEGORIES = ["Billing", "Technical", "General", "Account", "Other"];
+const PRIORITIES = ["Low", "Medium", "High"];
 
 const statusColors = {
-  New: 'bg-gray-200 text-gray-800',
-  Assigned: 'bg-blue-200 text-blue-800',
-  'In Progress': 'bg-yellow-200 text-yellow-800',
-  Resolved: 'bg-green-200 text-green-800',
+  New: "bg-gray-200 text-gray-800",
+  Assigned: "bg-blue-200 text-blue-800",
+  "In Progress": "bg-yellow-200 text-yellow-800",
+  Resolved: "bg-green-200 text-green-800",
 };
 
 const TicketDetail = () => {
@@ -31,28 +31,28 @@ const TicketDetail = () => {
   const [ticket, setTicket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
 
-  const [reviewCategory, setReviewCategory] = useState('');
-  const [reviewPriority, setReviewPriority] = useState('');
+  const [reviewCategory, setReviewCategory] = useState("");
+  const [reviewPriority, setReviewPriority] = useState("");
   const [savingReview, setSavingReview] = useState(false);
 
-  const [resolutionNote, setResolutionNote] = useState('');
+  const [resolutionNote, setResolutionNote] = useState("");
   const [resolving, setResolving] = useState(false);
 
-  const [actionError, setActionError] = useState('');
+  const [actionError, setActionError] = useState("");
   const messagesEndRef = useRef(null);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editSubject, setEditSubject] = useState('');
-  const [editDescription, setEditDescription] = useState('');
-  const [editCategory, setEditCategory] = useState('');
+  const [editSubject, setEditSubject] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editCategory, setEditCategory] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
 
-  const isAgent = user?.role === 'agent' || user?.role === 'admin';
+  const isAgent = user?.role === "agent" || user?.role === "admin";
 
   const loadTicket = async () => {
     try {
@@ -64,7 +64,7 @@ const TicketDetail = () => {
       setEditDescription(res.data.data.description);
       setEditCategory(res.data.data.category);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to load ticket');
+      setError(err.response?.data?.message || "Failed to load ticket");
     }
   };
 
@@ -88,8 +88,17 @@ const TicketDetail = () => {
   }, [id]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadMessages();
+      loadTicket();
+    }, 3000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -97,43 +106,43 @@ const TicketDetail = () => {
     setSending(true);
     try {
       await addMessage(id, newMessage);
-      setNewMessage('');
+      setNewMessage("");
       await loadMessages();
     } catch (err) {
-      setActionError(err.response?.data?.message || 'Failed to send message');
+      setActionError(err.response?.data?.message || "Failed to send message");
     } finally {
       setSending(false);
     }
   };
 
   const handleAssignToMe = async () => {
-    setActionError('');
+    setActionError("");
     try {
       await assignTicket(id);
       await loadTicket();
     } catch (err) {
-      setActionError(err.response?.data?.message || 'Failed to assign ticket');
+      setActionError(err.response?.data?.message || "Failed to assign ticket");
     }
   };
 
   const handleStatusChange = async (status) => {
-    setActionError('');
+    setActionError("");
     try {
       await updateTicketStatus(id, status);
       await loadTicket();
     } catch (err) {
-      setActionError(err.response?.data?.message || 'Failed to update status');
+      setActionError(err.response?.data?.message || "Failed to update status");
     }
   };
 
   const handleSaveReview = async () => {
     setSavingReview(true);
-    setActionError('');
+    setActionError("");
     try {
       await reviewAiSuggestion(id, reviewCategory, reviewPriority);
       await loadTicket();
     } catch (err) {
-      setActionError(err.response?.data?.message || 'Failed to save review');
+      setActionError(err.response?.data?.message || "Failed to save review");
     } finally {
       setSavingReview(false);
     }
@@ -142,31 +151,31 @@ const TicketDetail = () => {
   const handleResolve = async (e) => {
     e.preventDefault();
     setResolving(true);
-    setActionError('');
+    setActionError("");
     try {
       await resolveTicket(id, resolutionNote);
       await loadTicket();
     } catch (err) {
-      setActionError(err.response?.data?.message || 'Failed to resolve ticket');
+      setActionError(err.response?.data?.message || "Failed to resolve ticket");
     } finally {
       setResolving(false);
     }
   };
 
   const handleReopen = async () => {
-    setActionError('');
+    setActionError("");
     try {
       await reopenTicket(id);
       await loadTicket();
     } catch (err) {
-      setActionError(err.response?.data?.message || 'Failed to reopen ticket');
+      setActionError(err.response?.data?.message || "Failed to reopen ticket");
     }
   };
 
   const handleUpdateTicket = async (e) => {
     e.preventDefault();
     setSavingEdit(true);
-    setActionError('');
+    setActionError("");
     try {
       await updateTicket(id, {
         subject: editSubject,
@@ -176,14 +185,18 @@ const TicketDetail = () => {
       setIsEditing(false);
       await loadTicket();
     } catch (err) {
-      setActionError(err.response?.data?.message || 'Failed to update ticket');
+      setActionError(err.response?.data?.message || "Failed to update ticket");
     } finally {
       setSavingEdit(false);
     }
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
@@ -198,12 +211,15 @@ const TicketDetail = () => {
     <div className="max-w-2xl mx-auto p-6">
       <div className="flex justify-between items-center mb-4">
         <button
-          onClick={() => navigate(isAgent ? '/dashboard' : '/my-tickets')}
+          onClick={() => navigate(isAgent ? "/dashboard" : "/my-tickets")}
           className="text-sm text-blue-600 hover:underline"
         >
           ← Back
         </button>
-        <button onClick={logout} className="text-sm text-red-500 hover:text-red-700">
+        <button
+          onClick={logout}
+          className="text-sm text-red-500 hover:text-red-700"
+        >
           Logout
         </button>
       </div>
@@ -222,7 +238,9 @@ const TicketDetail = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1">Description</label>
+              <label className="block text-xs font-medium mb-1">
+                Description
+              </label>
               <textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
@@ -239,7 +257,9 @@ const TicketDetail = () => {
                 className="w-full border p-2 rounded text-sm"
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
             </div>
@@ -249,7 +269,7 @@ const TicketDetail = () => {
                 disabled={savingEdit}
                 className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
               >
-                {savingEdit ? 'Saving...' : 'Save Changes'}
+                {savingEdit ? "Saving..." : "Save Changes"}
               </button>
               <button
                 type="button"
@@ -264,7 +284,9 @@ const TicketDetail = () => {
           <>
             <div className="flex justify-between items-start mb-2">
               <h1 className="text-xl font-bold">{ticket.subject}</h1>
-              <span className={`text-xs px-2 py-1 rounded-full ${statusColors[ticket.status]}`}>
+              <span
+                className={`text-xs px-2 py-1 rounded-full ${statusColors[ticket.status]}`}
+              >
                 {ticket.status}
               </span>
             </div>
@@ -273,9 +295,10 @@ const TicketDetail = () => {
             </p>
             <p className="text-gray-700 mb-3">{ticket.description}</p>
             <p className="text-xs text-gray-400 mb-3">
-              Customer: {ticket.customer?.name} · Agent: {ticket.assignedAgent?.name || 'Unassigned'}
+              Customer: {ticket.customer?.name} · Agent:{" "}
+              {ticket.assignedAgent?.name || "Unassigned"}
             </p>
-            {!isAgent && ticket.status !== 'Resolved' && (
+            {!isAgent && ticket.status !== "Resolved" && (
               <button
                 onClick={() => setIsEditing(true)}
                 className="text-sm text-blue-600 hover:underline"
@@ -294,7 +317,9 @@ const TicketDetail = () => {
       {isAgent && ticket.aiSuggestion?.summary && (
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
           <h3 className="font-semibold text-purple-800 mb-2">AI Suggestion</h3>
-          <p className="text-sm text-purple-700 mb-3">{ticket.aiSuggestion.summary}</p>
+          <p className="text-sm text-purple-700 mb-3">
+            {ticket.aiSuggestion.summary}
+          </p>
           <div className="flex gap-3 mb-3">
             <div className="flex-1">
               <label className="block text-xs font-medium mb-1">Category</label>
@@ -302,10 +327,12 @@ const TicketDetail = () => {
                 value={reviewCategory}
                 onChange={(e) => setReviewCategory(e.target.value)}
                 className="w-full border p-2 rounded text-sm"
-                disabled={ticket.status === 'Resolved'}
+                disabled={ticket.status === "Resolved"}
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
             </div>
@@ -315,21 +342,23 @@ const TicketDetail = () => {
                 value={reviewPriority}
                 onChange={(e) => setReviewPriority(e.target.value)}
                 className="w-full border p-2 rounded text-sm"
-                disabled={ticket.status === 'Resolved'}
+                disabled={ticket.status === "Resolved"}
               >
                 {PRIORITIES.map((p) => (
-                  <option key={p} value={p}>{p}</option>
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
-          {ticket.status !== 'Resolved' && (
+          {ticket.status !== "Resolved" && (
             <button
               onClick={handleSaveReview}
               disabled={savingReview}
               className="bg-purple-600 text-white px-4 py-2 rounded text-sm hover:bg-purple-700 disabled:opacity-50"
             >
-              {savingReview ? 'Saving...' : 'Confirm & Save'}
+              {savingReview ? "Saving..." : "Confirm & Save"}
             </button>
           )}
         </div>
@@ -337,11 +366,12 @@ const TicketDetail = () => {
 
       {isAgent && ticket.aiSuggestion?.failed && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-sm text-yellow-800">
-          AI suggestion unavailable — please set category/priority manually above.
+          AI suggestion unavailable — please set category/priority manually
+          above.
         </div>
       )}
 
-      {isAgent && !ticket.assignedAgent && ticket.status !== 'Resolved' && (
+      {isAgent && !ticket.assignedAgent && ticket.status !== "Resolved" && (
         <button
           onClick={handleAssignToMe}
           className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 mb-4"
@@ -350,16 +380,16 @@ const TicketDetail = () => {
         </button>
       )}
 
-      {isAgent && ticket.assignedAgent && ticket.status === 'Assigned' && (
+      {isAgent && ticket.assignedAgent && ticket.status === "Assigned" && (
         <button
-          onClick={() => handleStatusChange('In Progress')}
+          onClick={() => handleStatusChange("In Progress")}
           className="bg-yellow-500 text-white px-4 py-2 rounded text-sm hover:bg-yellow-600 mb-4"
         >
           Mark In Progress
         </button>
       )}
 
-      {isAgent && ticket.status === 'Resolved' && (
+      {isAgent && ticket.status === "Resolved" && (
         <button
           onClick={handleReopen}
           className="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 mb-4"
@@ -377,13 +407,13 @@ const TicketDetail = () => {
           {messages.map((m) => (
             <div
               key={m._id}
-              className={`flex ${m.senderRole === 'agent' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${m.senderRole === "agent" ? "justify-end" : "justify-start"}`}
             >
               <div
                 className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
-                  m.senderRole === 'agent'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-800'
+                  m.senderRole === "agent"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-800"
                 }`}
               >
                 <p className="text-xs opacity-75 mb-1">{m.sender?.name}</p>
@@ -394,7 +424,7 @@ const TicketDetail = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {ticket.status !== 'Resolved' ? (
+        {ticket.status !== "Resolved" ? (
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <input
               type="text"
@@ -408,15 +438,17 @@ const TicketDetail = () => {
               disabled={sending}
               className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
             >
-              {sending ? '...' : 'Send'}
+              {sending ? "..." : "Send"}
             </button>
           </form>
         ) : (
-          <p className="text-sm text-gray-400">Ticket resolved — conversation closed.</p>
+          <p className="text-sm text-gray-400">
+            Ticket resolved — conversation closed.
+          </p>
         )}
       </div>
 
-      {isAgent && ticket.status === 'In Progress' && (
+      {isAgent && ticket.status === "In Progress" && (
         <div className="bg-white rounded-lg shadow-md p-4">
           <h3 className="font-semibold mb-2">Resolve Ticket</h3>
           <form onSubmit={handleResolve} className="space-y-2">
@@ -433,13 +465,13 @@ const TicketDetail = () => {
               disabled={resolving}
               className="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 disabled:opacity-50"
             >
-              {resolving ? 'Resolving...' : 'Mark as Resolved'}
+              {resolving ? "Resolving..." : "Mark as Resolved"}
             </button>
           </form>
         </div>
       )}
 
-      {ticket.status === 'Resolved' && ticket.resolutionNote && (
+      {ticket.status === "Resolved" && ticket.resolutionNote && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <h3 className="font-semibold text-green-800 mb-1">Resolution</h3>
           <p className="text-sm text-green-700">{ticket.resolutionNote}</p>
