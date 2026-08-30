@@ -1,20 +1,28 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getTickets } from '../api/tickets.js';
-import { useAuth } from '../context/useAuth.js';
 
-const statusColors = {
-  New: 'bg-gray-200 text-gray-800',
-  Assigned: 'bg-blue-200 text-blue-800',
-  'In Progress': 'bg-yellow-200 text-yellow-800',
-  Resolved: 'bg-green-200 text-green-800',
+const statusStyles = {
+  New: { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400' },
+  Assigned: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
+  'In Progress': { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-[#E8871E]' },
+  Resolved: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+};
+
+const StatusBadge = ({ status }) => {
+  const s = statusStyles[status] || statusStyles.New;
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${s.bg} ${s.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`}></span>
+      {status}
+    </span>
+  );
 };
 
 const MyTickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,45 +41,54 @@ const MyTickets = () => {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Tickets</h1>
+    <div className="max-w-3xl mx-auto px-6 py-8">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="font-display text-2xl font-semibold text-[#14213D]">My Tickets</h1>
+          <p className="text-sm text-gray-500 mt-1">Track and manage your support requests</p>
+        </div>
         <button
-          onClick={logout}
-          className="text-sm text-red-500 hover:text-red-700"
+          onClick={() => navigate('/new-ticket')}
+          className="bg-[#2A6F6F] text-white text-sm font-medium px-4 py-2.5 rounded-md hover:bg-[#235c5c] transition-colors"
         >
-          Logout
+          + New Ticket
         </button>
       </div>
 
-      <button
-        onClick={() => navigate('/new-ticket')}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-6"
-      >
-        + New Ticket
-      </button>
-
-      {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
+          {error}
+        </div>
+      )}
 
       {loading ? (
-        <p className="text-gray-500">Loading...</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white border border-gray-100 rounded-xl p-4 h-20 animate-pulse" />
+          ))}
+        </div>
       ) : tickets.length === 0 ? (
-        <p className="text-gray-400">No tickets yet.</p>
+        <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center">
+          <p className="text-gray-400 mb-3">You haven't submitted any tickets yet.</p>
+          <Link to="/new-ticket" className="text-[#2A6F6F] text-sm font-medium hover:underline">
+            Submit your first ticket →
+          </Link>
+        </div>
       ) : (
         <div className="space-y-3">
           {tickets.map((t) => (
             <Link
               key={t._id}
               to={`/tickets/${t._id}`}
-              className="block bg-white border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+              className="block bg-white border border-gray-100 rounded-xl p-4 hover:border-[#2A6F6F]/30 hover:shadow-sm transition-all"
             >
-              <div className="flex justify-between items-start mb-1">
-                <span className="font-semibold">{t.subject}</span>
-                <span className={`text-xs px-2 py-1 rounded-full ${statusColors[t.status]}`}>
-                  {t.status}
-                </span>
+              <div className="flex justify-between items-start mb-2">
+                <span className="font-medium text-[#14213D]">{t.subject}</span>
+                <StatusBadge status={t.status} />
               </div>
-              <p className="text-sm text-gray-500">{t.ticketNumber} · {t.category} · {t.priority}</p>
+              <p className="text-xs text-gray-400 font-mono">
+                {t.ticketNumber} · {t.category} · {t.priority} priority
+              </p>
             </Link>
           ))}
         </div>

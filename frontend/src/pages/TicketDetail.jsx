@@ -16,16 +16,26 @@ import { useAuth } from "../context/useAuth.js";
 const CATEGORIES = ["Billing", "Technical", "General", "Account", "Other"];
 const PRIORITIES = ["Low", "Medium", "High"];
 
-const statusColors = {
-  New: "bg-gray-200 text-gray-800",
-  Assigned: "bg-blue-200 text-blue-800",
-  "In Progress": "bg-yellow-200 text-yellow-800",
-  Resolved: "bg-green-200 text-green-800",
+const statusStyles = {
+  New: { bg: "bg-gray-100", text: "text-gray-600", dot: "bg-gray-400" },
+  Assigned: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
+  "In Progress": { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-[#E8871E]" },
+  Resolved: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
+};
+
+const StatusBadge = ({ status }) => {
+  const s = statusStyles[status] || statusStyles.New;
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${s.bg} ${s.text}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`}></span>
+      {status}
+    </span>
+  );
 };
 
 const TicketDetail = () => {
   const { id } = useParams();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [ticket, setTicket] = useState(null);
@@ -193,73 +203,61 @@ const TicketDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        Loading...
+      <div className="flex items-center justify-center h-96">
+        <div className="w-6 h-6 border-2 border-[#2A6F6F] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
-        <p className="text-red-500">{error}</p>
+      <div className="max-w-2xl mx-auto px-6 py-8">
+        <p className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={() => navigate(isAgent ? "/dashboard" : "/my-tickets")}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          ← Back
-        </button>
-        <button
-          onClick={logout}
-          className="text-sm text-red-500 hover:text-red-700"
-        >
-          Logout
-        </button>
-      </div>
+    <div className="max-w-2xl mx-auto px-6 py-8">
+      <button
+        onClick={() => navigate(isAgent ? "/dashboard" : "/my-tickets")}
+        className="text-sm text-gray-500 hover:text-[#2A6F6F] transition-colors mb-4 inline-flex items-center gap-1"
+      >
+        ← Back
+      </button>
 
-      <div className="bg-white rounded-lg shadow-md p-6 mb-4">
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-4">
         {isEditing ? (
-          <form onSubmit={handleUpdateTicket} className="space-y-3">
+          <form onSubmit={handleUpdateTicket} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium mb-1">Subject</label>
+              <label className="block text-xs font-medium text-[#14213D] mb-1">Subject</label>
               <input
                 type="text"
                 value={editSubject}
                 onChange={(e) => setEditSubject(e.target.value)}
-                className="w-full border p-2 rounded text-sm"
+                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1">
-                Description
-              </label>
+              <label className="block text-xs font-medium text-[#14213D] mb-1">Description</label>
               <textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
                 rows={4}
-                className="w-full border p-2 rounded text-sm"
+                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1">Category</label>
+              <label className="block text-xs font-medium text-[#14213D] mb-1">Category</label>
               <select
                 value={editCategory}
                 onChange={(e) => setEditCategory(e.target.value)}
-                className="w-full border p-2 rounded text-sm"
+                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </div>
@@ -267,14 +265,14 @@ const TicketDetail = () => {
               <button
                 type="submit"
                 disabled={savingEdit}
-                className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                className="bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors disabled:opacity-50"
               >
                 {savingEdit ? "Saving..." : "Save Changes"}
               </button>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300"
+                className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
               >
                 Cancel
               </button>
@@ -283,25 +281,20 @@ const TicketDetail = () => {
         ) : (
           <>
             <div className="flex justify-between items-start mb-2">
-              <h1 className="text-xl font-bold">{ticket.subject}</h1>
-              <span
-                className={`text-xs px-2 py-1 rounded-full ${statusColors[ticket.status]}`}
-              >
-                {ticket.status}
-              </span>
+              <h1 className="font-display text-xl font-semibold text-[#14213D]">{ticket.subject}</h1>
+              <StatusBadge status={ticket.status} />
             </div>
-            <p className="text-sm text-gray-500 mb-3">
-              {ticket.ticketNumber} · {ticket.category} · {ticket.priority}
+            <p className="text-xs text-gray-400 font-mono mb-3">
+              {ticket.ticketNumber} · {ticket.category} · {ticket.priority} priority
             </p>
-            <p className="text-gray-700 mb-3">{ticket.description}</p>
+            <p className="text-gray-600 text-sm mb-4 leading-relaxed">{ticket.description}</p>
             <p className="text-xs text-gray-400 mb-3">
-              Customer: {ticket.customer?.name} · Agent:{" "}
-              {ticket.assignedAgent?.name || "Unassigned"}
+              {ticket.customer?.name} → {ticket.assignedAgent?.name || "Unassigned"}
             </p>
             {!isAgent && ticket.status !== "Resolved" && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-[#2A6F6F] hover:underline font-medium"
               >
                 Edit Ticket
               </button>
@@ -311,43 +304,40 @@ const TicketDetail = () => {
       </div>
 
       {actionError && (
-        <p className="text-red-500 text-sm mb-4">{actionError}</p>
+        <p className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm mb-4">{actionError}</p>
       )}
 
       {isAgent && ticket.aiSuggestion?.summary && (
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
-          <h3 className="font-semibold text-purple-800 mb-2">AI Suggestion</h3>
-          <p className="text-sm text-purple-700 mb-3">
-            {ticket.aiSuggestion.summary}
-          </p>
+        <div className="bg-white border border-[#E8871E]/20 rounded-xl p-5 mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8871E]"></span>
+            <h3 className="font-semibold text-[#14213D] text-sm">AI Suggestion</h3>
+          </div>
+          <p className="text-sm text-gray-600 mb-4">{ticket.aiSuggestion.summary}</p>
           <div className="flex gap-3 mb-3">
             <div className="flex-1">
-              <label className="block text-xs font-medium mb-1">Category</label>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Category</label>
               <select
                 value={reviewCategory}
                 onChange={(e) => setReviewCategory(e.target.value)}
-                className="w-full border p-2 rounded text-sm"
+                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
                 disabled={ticket.status === "Resolved"}
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-xs font-medium mb-1">Priority</label>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Priority</label>
               <select
                 value={reviewPriority}
                 onChange={(e) => setReviewPriority(e.target.value)}
-                className="w-full border p-2 rounded text-sm"
+                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
                 disabled={ticket.status === "Resolved"}
               >
                 {PRIORITIES.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
+                  <option key={p} value={p}>{p}</option>
                 ))}
               </select>
             </div>
@@ -356,7 +346,7 @@ const TicketDetail = () => {
             <button
               onClick={handleSaveReview}
               disabled={savingReview}
-              className="bg-purple-600 text-white px-4 py-2 rounded text-sm hover:bg-purple-700 disabled:opacity-50"
+              className="bg-[#14213D] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#1e2d54] transition-colors disabled:opacity-50"
             >
               {savingReview ? "Saving..." : "Confirm & Save"}
             </button>
@@ -365,42 +355,43 @@ const TicketDetail = () => {
       )}
 
       {isAgent && ticket.aiSuggestion?.failed && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-sm text-yellow-800">
-          AI suggestion unavailable — please set category/priority manually
-          above.
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-sm text-amber-800">
+          AI suggestion unavailable — set category and priority manually above.
         </div>
       )}
 
-      {isAgent && !ticket.assignedAgent && ticket.status !== "Resolved" && (
-        <button
-          onClick={handleAssignToMe}
-          className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 mb-4"
-        >
-          Assign to Me
-        </button>
-      )}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {isAgent && !ticket.assignedAgent && ticket.status !== "Resolved" && (
+          <button
+            onClick={handleAssignToMe}
+            className="bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors"
+          >
+            Assign to Me
+          </button>
+        )}
 
-      {isAgent && ticket.assignedAgent && ticket.status === "Assigned" && (
-        <button
-          onClick={() => handleStatusChange("In Progress")}
-          className="bg-yellow-500 text-white px-4 py-2 rounded text-sm hover:bg-yellow-600 mb-4"
-        >
-          Mark In Progress
-        </button>
-      )}
+        {isAgent && ticket.assignedAgent && ticket.status === "Assigned" && (
+          <button
+            onClick={() => handleStatusChange("In Progress")}
+            className="bg-[#E8871E] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d47818] transition-colors"
+          >
+            Mark In Progress
+          </button>
+        )}
 
-      {isAgent && ticket.status === "Resolved" && (
-        <button
-          onClick={handleReopen}
-          className="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-700 mb-4"
-        >
-          Reopen Ticket
-        </button>
-      )}
+        {isAgent && ticket.status === "Resolved" && (
+          <button
+            onClick={handleReopen}
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
+          >
+            Reopen Ticket
+          </button>
+        )}
+      </div>
 
-      <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-        <h3 className="font-semibold mb-3">Conversation</h3>
-        <div className="space-y-3 max-h-80 overflow-y-auto mb-3">
+      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-4">
+        <h3 className="font-semibold text-[#14213D] text-sm mb-3">Conversation</h3>
+        <div className="space-y-3 max-h-80 overflow-y-auto mb-4 pr-1">
           {messages.length === 0 && (
             <p className="text-sm text-gray-400">No messages yet.</p>
           )}
@@ -410,13 +401,15 @@ const TicketDetail = () => {
               className={`flex ${m.senderRole === "agent" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
+                className={`max-w-xs px-3.5 py-2.5 rounded-2xl text-sm ${
                   m.senderRole === "agent"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-800"
+                    ? "bg-[#2A6F6F] text-white rounded-br-sm"
+                    : "bg-gray-100 text-gray-800 rounded-bl-sm"
                 }`}
               >
-                <p className="text-xs opacity-75 mb-1">{m.sender?.name}</p>
+                <p className={`text-xs mb-0.5 ${m.senderRole === "agent" ? "text-white/70" : "text-gray-400"}`}>
+                  {m.sender?.name}
+                </p>
                 <p>{m.text}</p>
               </div>
             </div>
@@ -431,39 +424,37 @@ const TicketDetail = () => {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 border p-2 rounded text-sm"
+              className="flex-1 border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
             />
             <button
               type="submit"
               disabled={sending}
-              className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+              className="bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors disabled:opacity-50"
             >
               {sending ? "..." : "Send"}
             </button>
           </form>
         ) : (
-          <p className="text-sm text-gray-400">
-            Ticket resolved — conversation closed.
-          </p>
+          <p className="text-sm text-gray-400">Ticket resolved — conversation closed.</p>
         )}
       </div>
 
       {isAgent && ticket.status === "In Progress" && (
-        <div className="bg-white rounded-lg shadow-md p-4">
-          <h3 className="font-semibold mb-2">Resolve Ticket</h3>
-          <form onSubmit={handleResolve} className="space-y-2">
+        <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <h3 className="font-semibold text-[#14213D] text-sm mb-3">Resolve Ticket</h3>
+          <form onSubmit={handleResolve} className="space-y-3">
             <textarea
               value={resolutionNote}
               onChange={(e) => setResolutionNote(e.target.value)}
               placeholder="Resolution note (required)"
               rows={3}
-              className="w-full border p-2 rounded text-sm"
+              className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
               required
             />
             <button
               type="submit"
               disabled={resolving}
-              className="bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 disabled:opacity-50"
+              className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50"
             >
               {resolving ? "Resolving..." : "Mark as Resolved"}
             </button>
@@ -472,13 +463,13 @@ const TicketDetail = () => {
       )}
 
       {ticket.status === "Resolved" && ticket.resolutionNote && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <h3 className="font-semibold text-green-800 mb-1">Resolution</h3>
-          <p className="text-sm text-green-700">{ticket.resolutionNote}</p>
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
+          <h3 className="font-semibold text-emerald-800 text-sm mb-1">Resolution</h3>
+          <p className="text-sm text-emerald-700">{ticket.resolutionNote}</p>
         </div>
       )}
     </div>
   );
 };
-//
+
 export default TicketDetail;

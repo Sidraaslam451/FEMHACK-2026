@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
+import Layout from './components/Layout.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
@@ -22,7 +23,7 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Layout><Dashboard /></Layout>
               </ProtectedRoute>
             }
           />
@@ -31,7 +32,7 @@ function App() {
             path="/new-ticket"
             element={
               <ProtectedRoute>
-                <CreateTicket />
+                <Layout><CreateTicket /></Layout>
               </ProtectedRoute>
             }
           />
@@ -40,7 +41,7 @@ function App() {
             path="/my-tickets"
             element={
               <ProtectedRoute>
-                <MyTickets />
+                <Layout><MyTickets /></Layout>
               </ProtectedRoute>
             }
           />
@@ -49,7 +50,7 @@ function App() {
             path="/tickets/:id"
             element={
               <ProtectedRoute>
-                <TicketDetail />
+                <Layout><TicketDetail /></Layout>
               </ProtectedRoute>
             }
           />
