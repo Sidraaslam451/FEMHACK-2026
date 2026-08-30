@@ -1,3 +1,4 @@
+// frontend/src/pages/TicketDetail.jsx
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -12,6 +13,17 @@ import {
   updateTicket,
 } from "../api/tickets.js";
 import { useAuth } from "../context/useAuth.js";
+import {
+  ArrowLeft,
+  Sparkles,
+  UserPlus,
+  Clock,
+  RotateCcw,
+  Send,
+  CheckCircle2,
+  Pencil,
+  AlertTriangle,
+} from "lucide-react";
 
 const CATEGORIES = ["Billing", "Technical", "General", "Account", "Other"];
 const PRIORITIES = ["Low", "Medium", "High"];
@@ -211,22 +223,23 @@ const TicketDetail = () => {
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-8">
+      <div className="max-w-2xl">
         <p className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-8">
+    <div className="max-w-2xl">
       <button
         onClick={() => navigate(isAgent ? "/dashboard" : "/my-tickets")}
-        className="text-sm text-gray-500 hover:text-[#2A6F6F] transition-colors mb-4 inline-flex items-center gap-1"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#2A6F6F] transition-colors mb-4"
       >
-        ← Back
+        <ArrowLeft size={16} />
+        Back
       </button>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-4">
         {isEditing ? (
           <form onSubmit={handleUpdateTicket} className="space-y-4">
             <div>
@@ -294,8 +307,9 @@ const TicketDetail = () => {
             {!isAgent && ticket.status !== "Resolved" && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="text-sm text-[#2A6F6F] hover:underline font-medium"
+                className="inline-flex items-center gap-1.5 text-sm text-[#2A6F6F] hover:underline font-medium"
               >
+                <Pencil size={14} />
                 Edit Ticket
               </button>
             )}
@@ -308,9 +322,11 @@ const TicketDetail = () => {
       )}
 
       {isAgent && ticket.aiSuggestion?.summary && (
-        <div className="bg-white border border-[#E8871E]/20 rounded-xl p-5 mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E8871E]"></span>
+        <div className="bg-white border border-[#E8871E]/20 rounded-2xl p-5 mb-4">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-7 h-7 rounded-lg bg-[#E8871E]/15 flex items-center justify-center">
+              <Sparkles size={14} className="text-[#E8871E]" strokeWidth={2} />
+            </div>
             <h3 className="font-semibold text-[#14213D] text-sm">AI Suggestion</h3>
           </div>
           <p className="text-sm text-gray-600 mb-4">{ticket.aiSuggestion.summary}</p>
@@ -355,7 +371,8 @@ const TicketDetail = () => {
       )}
 
       {isAgent && ticket.aiSuggestion?.failed && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-sm text-amber-800">
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4 text-sm text-amber-800 flex items-start gap-2">
+          <AlertTriangle size={16} className="shrink-0 mt-0.5" />
           AI suggestion unavailable — set category and priority manually above.
         </div>
       )}
@@ -364,8 +381,9 @@ const TicketDetail = () => {
         {isAgent && !ticket.assignedAgent && ticket.status !== "Resolved" && (
           <button
             onClick={handleAssignToMe}
-            className="bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors"
+            className="inline-flex items-center gap-2 bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors"
           >
+            <UserPlus size={16} />
             Assign to Me
           </button>
         )}
@@ -373,8 +391,9 @@ const TicketDetail = () => {
         {isAgent && ticket.assignedAgent && ticket.status === "Assigned" && (
           <button
             onClick={() => handleStatusChange("In Progress")}
-            className="bg-[#E8871E] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d47818] transition-colors"
+            className="inline-flex items-center gap-2 bg-[#E8871E] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d47818] transition-colors"
           >
+            <Clock size={16} />
             Mark In Progress
           </button>
         )}
@@ -382,14 +401,15 @@ const TicketDetail = () => {
         {isAgent && ticket.status === "Resolved" && (
           <button
             onClick={handleReopen}
-            className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
+            className="inline-flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
           >
+            <RotateCcw size={16} />
             Reopen Ticket
           </button>
         )}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
         <h3 className="font-semibold text-[#14213D] text-sm mb-3">Conversation</h3>
         <div className="space-y-3 max-h-80 overflow-y-auto mb-4 pr-1">
           {messages.length === 0 && (
@@ -429,9 +449,9 @@ const TicketDetail = () => {
             <button
               type="submit"
               disabled={sending}
-              className="bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors disabled:opacity-50"
             >
-              {sending ? "..." : "Send"}
+              <Send size={16} />
             </button>
           </form>
         ) : (
@@ -440,7 +460,7 @@ const TicketDetail = () => {
       </div>
 
       {isAgent && ticket.status === "In Progress" && (
-        <div className="bg-white rounded-xl border border-gray-100 p-5">
+        <div className="bg-white rounded-2xl border border-gray-100 p-5">
           <h3 className="font-semibold text-[#14213D] text-sm mb-3">Resolve Ticket</h3>
           <form onSubmit={handleResolve} className="space-y-3">
             <textarea
@@ -454,8 +474,9 @@ const TicketDetail = () => {
             <button
               type="submit"
               disabled={resolving}
-              className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50"
             >
+              <CheckCircle2 size={16} />
               {resolving ? "Resolving..." : "Mark as Resolved"}
             </button>
           </form>
@@ -463,8 +484,11 @@ const TicketDetail = () => {
       )}
 
       {ticket.status === "Resolved" && ticket.resolutionNote && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
-          <h3 className="font-semibold text-emerald-800 text-sm mb-1">Resolution</h3>
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+          <h3 className="font-semibold text-emerald-800 text-sm mb-1 flex items-center gap-1.5">
+            <CheckCircle2 size={16} />
+            Resolution
+          </h3>
           <p className="text-sm text-emerald-700">{ticket.resolutionNote}</p>
         </div>
       )}

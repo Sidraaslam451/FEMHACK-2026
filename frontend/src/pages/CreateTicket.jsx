@@ -1,6 +1,8 @@
+// frontend/src/pages/CreateTicket.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createTicket } from '../api/tickets.js';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 
 const CATEGORIES = ['Billing', 'Technical', 'General', 'Account', 'Other'];
 
@@ -27,12 +29,13 @@ const CreateTicket = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-6 py-8">
+    <div className="max-w-2xl">
       <button
         onClick={() => navigate('/my-tickets')}
-        className="text-sm text-gray-500 hover:text-[#2A6F6F] transition-colors mb-4 inline-flex items-center gap-1"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#2A6F6F] transition-colors mb-4"
       >
-        ← My tickets
+        <ArrowLeft size={16} />
+        My tickets
       </button>
 
       <h1 className="font-display text-2xl font-semibold text-[#14213D] mb-1">New Support Ticket</h1>
@@ -44,7 +47,7 @@ const CreateTicket = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-100 rounded-xl p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="bg-white border border-gray-100 rounded-2xl p-6 space-y-5">
         <div>
           <label className="block text-sm font-medium text-[#14213D] mb-1.5">Subject</label>
           <input
@@ -52,7 +55,7 @@ const CreateTicket = () => {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="Brief summary of the issue"
-            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F]"
+            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F] transition-shadow"
             required
           />
         </div>
@@ -64,7 +67,7 @@ const CreateTicket = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="What happened? Include any relevant details."
             rows={5}
-            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F]"
+            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F] transition-shadow"
             required
           />
         </div>
@@ -74,7 +77,7 @@ const CreateTicket = () => {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F]"
+            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F] transition-shadow"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -82,9 +85,11 @@ const CreateTicket = () => {
           </select>
         </div>
 
-        <div className="bg-[#F7F7F5] rounded-lg p-3 flex items-start gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E8871E] mt-1.5 shrink-0"></span>
-          <p className="text-xs text-gray-500">
+        <div className="bg-[#F7F7F5] rounded-xl p-4 flex items-start gap-3">
+          <div className="w-7 h-7 rounded-lg bg-[#E8871E]/15 flex items-center justify-center shrink-0">
+            <Sparkles size={14} className="text-[#E8871E]" strokeWidth={2} />
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed">
             AI will suggest a category, priority, and summary for the agent to review before your ticket is assigned.
           </p>
         </div>
@@ -92,7 +97,7 @@ const CreateTicket = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#2A6F6F] text-white font-medium p-2.5 rounded-lg hover:bg-[#235c5c] transition-colors disabled:opacity-50"
+          className="w-full bg-[#2A6F6F] text-white font-medium p-3 rounded-lg hover:bg-[#235c5c] transition-colors disabled:opacity-50"
         >
           {loading ? 'Submitting...' : 'Submit Ticket'}
         </button>
