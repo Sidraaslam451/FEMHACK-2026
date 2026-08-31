@@ -1,21 +1,31 @@
-// frontend/src/pages/Dashboard.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getTickets } from '../api/tickets.js';
 import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts';
+import {
+  Layers,
   Inbox,
   Clock,
   CheckCircle2,
-  Layers,
   ArrowRight,
   User,
 } from 'lucide-react';
 
 const statusStyles = {
-  New: { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400' },
-  Assigned: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
-  'In Progress': { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-[#E8871E]' },
-  Resolved: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+  New: { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400', hex: '#9CA3AF' },
+  Assigned: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', hex: '#3B82F6' },
+  'In Progress': { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-[#E8871E]', hex: '#E8871E' },
+  Resolved: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', hex: '#10B981' },
 };
 
 const priorityStyles = {
@@ -36,12 +46,10 @@ const StatusBadge = ({ status }) => {
 
 const StatCard = ({ icon: Icon, label, value, accent }) => (
   <div className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-    <div className="flex items-center justify-between mb-3">
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${accent.bg}`}>
-        <Icon size={18} className={accent.text} strokeWidth={2} />
-      </div>
+    <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${accent.bg}`}>
+      <Icon size={18} className={accent.text} strokeWidth={2} />
     </div>
-    <p className="font-display text-2xl font-semibold text-[#14213D]">{value}</p>
+    <p className="text-2xl font-bold text-[#14213D]">{value}</p>
     <p className="text-xs text-gray-500 mt-0.5">{label}</p>
   </div>
 );
@@ -79,16 +87,27 @@ const Dashboard = () => {
     resolved: tickets.filter((t) => t.status === 'Resolved').length,
   };
 
+  const statusChartData = ['New', 'Assigned', 'In Progress', 'Resolved']
+    .map((s) => ({
+      name: s,
+      value: tickets.filter((t) => t.status === s).length,
+      color: statusStyles[s].hex,
+    }))
+    .filter((d) => d.value > 0);
+
+  const categoryChartData = ['Billing', 'Technical', 'General', 'Account', 'Other'].map((c) => ({
+    name: c,
+    count: tickets.filter((t) => t.category === c).length,
+  }));
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-display text-2xl font-semibold text-[#14213D]">Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">Overview of all support tickets</p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[#14213D]">Dashboard</h1>
+        <p className="text-sm text-gray-500 mt-1">Overview of all support tickets</p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <StatCard
           icon={Layers}
           label="Total tickets"
@@ -114,6 +133,62 @@ const Dashboard = () => {
           accent={{ bg: 'bg-emerald-50', text: 'text-emerald-600' }}
         />
       </div>
+
+      {!loading && tickets.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <h3 className="text-sm font-semibold text-[#14213D] mb-4">Ticket Status</h3>
+            <div className="flex items-center gap-6">
+              <div className="w-32 h-32 shrink-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusChartData}
+                      dataKey="value"
+                      innerRadius={35}
+                      outerRadius={55}
+                      paddingAngle={2}
+                    >
+                      {statusChartData.map((entry, i) => (
+                        <Cell key={i} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="space-y-2 flex-1">
+                {statusChartData.map((d) => (
+                  <div key={d.name} className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-2 text-gray-600">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }}></span>
+                      {d.name}
+                    </span>
+                    <span className="font-semibold text-[#14213D]">{d.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 p-5">
+            <h3 className="text-sm font-semibold text-[#14213D] mb-4">Tickets by Category</h3>
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart data={categoryChartData}>
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 11, fill: '#9CA3AF' }}
+                  axisLine={{ stroke: '#F3F4F6' }}
+                  tickLine={false}
+                />
+                <YAxis hide />
+                <Tooltip cursor={{ fill: '#F7F7F5' }} />
+                <Bar dataKey="count" fill="#2A6F6F" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
         {['All', 'New', 'Assigned', 'In Progress', 'Resolved'].map((s) => (
