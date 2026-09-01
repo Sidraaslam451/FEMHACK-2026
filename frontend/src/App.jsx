@@ -11,6 +11,7 @@ import CreateTicket from "./pages/CreateTicket.jsx";
 import MyTickets from "./pages/MyTickets.jsx";
 import TicketDetail from "./pages/TicketDetail.jsx";
 import ChatWidget from "./components/ChatWidget.jsx";
+import CustomCursor from './components/CustomCursor.jsx';
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
             />
           </Routes>
           <ChatWidget />
+          <CustomCursor />
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

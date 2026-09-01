@@ -1,10 +1,10 @@
-// frontend/src/components/ChatWidget.jsx
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
 import { sendChatMessage } from '../api/chat.js';
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
   const [messages, setMessages] = useState([
     { role: 'assistant', text: "Hi! I'm here to help you use SupportFlow. Ask me anything." },
   ]);
@@ -123,6 +123,34 @@ const ChatWidget = () => {
               <Send size={15} />
             </button>
           </form>
+        </div>
+      )}
+
+      {!isOpen && showTooltip && (
+        <div
+          className="fixed bottom-24 right-6 flex items-center gap-2 rounded-xl shadow-lg pl-3 pr-2 py-2.5 z-50"
+          style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+        >
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: 'linear-gradient(135deg, var(--accent), var(--highlight))' }}
+          >
+            <Sparkles size={14} className="text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>AI Assistant</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Need help? Chat with me!</p>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowTooltip(false);
+            }}
+            className="ml-1"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            <X size={14} />
+          </button>
         </div>
       )}
 
