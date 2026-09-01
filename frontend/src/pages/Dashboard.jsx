@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getTickets } from "../api/tickets.js";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { getTickets } from '../api/tickets.js';
 import {
   PieChart,
   Pie,
@@ -11,78 +11,53 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-} from "recharts";
-import {
-  Layers,
-  Inbox,
-  Clock,
-  CheckCircle2,
-  ArrowRight,
-  User,
-} from "lucide-react";
+} from 'recharts';
+import { Layers, Inbox, Clock, CheckCircle2, ArrowRight, User } from 'lucide-react';
 
-const statusStyles = {
-  New: {
-    bg: "bg-gray-100",
-    text: "text-gray-600",
-    dot: "bg-gray-400",
-    hex: "#9CA3AF",
-  },
-  Assigned: {
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    dot: "bg-blue-500",
-    hex: "#3B82F6",
-  },
-  "In Progress": {
-    bg: "bg-amber-50",
-    text: "text-amber-700",
-    dot: "bg-[#E8871E]",
-    hex: "#E8871E",
-  },
-  Resolved: {
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
-    dot: "bg-emerald-500",
-    hex: "#10B981",
-  },
+const statusColors = {
+  New: '#9CA3AF',
+  Assigned: '#60A5FA',
+  'In Progress': '#FB7185',
+  Resolved: '#34D399',
 };
 
 const priorityStyles = {
-  Low: { text: "text-emerald-600", dot: "bg-emerald-500" },
-  Medium: { text: "text-amber-600", dot: "bg-amber-500" },
-  High: { text: "text-red-600", dot: "bg-red-500" },
+  Low: '#34D399',
+  Medium: '#FBBF24',
+  High: '#FB7185',
 };
 
-const StatusBadge = ({ status }) => {
-  const s = statusStyles[status] || statusStyles.New;
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${s.bg} ${s.text}`}
-    >
-      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`}></span>
-      {status}
-    </span>
-  );
-};
+const StatusBadge = ({ status }) => (
+  <span
+    className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
+    style={{ backgroundColor: `${statusColors[status]}20`, color: statusColors[status] }}
+  >
+    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusColors[status] }}></span>
+    {status}
+  </span>
+);
 
-const StatCard = ({ icon: Icon, label, value, accent }) => (
-  <div className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+const StatCard = ({ icon: Icon, label, value }) => (
+  <div
+    className="rounded-2xl p-5 transition-transform hover:-translate-y-0.5"
+    style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+  >
     <div
-      className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${accent.bg}`}
+      className="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+      style={{ backgroundColor: 'var(--accent-soft)' }}
     >
-      <Icon size={18} className={accent.text} strokeWidth={2} />
+      <Icon size={18} style={{ color: 'var(--accent)' }} strokeWidth={2} />
     </div>
-    <p className="text-2xl font-bold text-[#14213D]">{value}</p>
-    <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+    <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{value}</p>
+    <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{label}</p>
   </div>
 );
 
 const Dashboard = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [error, setError] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -90,7 +65,7 @@ const Dashboard = () => {
         const res = await getTickets();
         setTickets(res.data.data);
       } catch (err) {
-        setError("Failed to load tickets");
+        setError('Failed to load tickets');
         console.error(err);
       } finally {
         setLoading(false);
@@ -100,32 +75,20 @@ const Dashboard = () => {
   }, []);
 
   const filteredTickets =
-    statusFilter === "All"
-      ? tickets
-      : tickets.filter((t) => t.status === statusFilter);
+    statusFilter === 'All' ? tickets : tickets.filter((t) => t.status === statusFilter);
 
   const stats = {
     total: tickets.length,
-    new: tickets.filter((t) => t.status === "New").length,
-    inProgress: tickets.filter((t) => t.status === "In Progress").length,
-    resolved: tickets.filter((t) => t.status === "Resolved").length,
+    new: tickets.filter((t) => t.status === 'New').length,
+    inProgress: tickets.filter((t) => t.status === 'In Progress').length,
+    resolved: tickets.filter((t) => t.status === 'Resolved').length,
   };
 
-  const statusChartData = ["New", "Assigned", "In Progress", "Resolved"]
-    .map((s) => ({
-      name: s,
-      value: tickets.filter((t) => t.status === s).length,
-      color: statusStyles[s].hex,
-    }))
+  const statusChartData = ['New', 'Assigned', 'In Progress', 'Resolved']
+    .map((s) => ({ name: s, value: tickets.filter((t) => t.status === s).length, color: statusColors[s] }))
     .filter((d) => d.value > 0);
 
-  const categoryChartData = [
-    "Billing",
-    "Technical",
-    "General",
-    "Account",
-    "Other",
-  ].map((c) => ({
+  const categoryChartData = ['Billing', 'Technical', 'General', 'Account', 'Other'].map((c) => ({
     name: c,
     count: tickets.filter((t) => t.category === c).length,
   }));
@@ -133,56 +96,29 @@ const Dashboard = () => {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#14213D]">Dashboard</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Overview of all support tickets
-        </p>
+        <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
+        <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Overview of all support tickets</p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <StatCard
-          icon={Layers}
-          label="Total tickets"
-          value={stats.total}
-          accent={{ bg: "bg-[#14213D]/5", text: "text-[#14213D]" }}
-        />
-        <StatCard
-          icon={Inbox}
-          label="New"
-          value={stats.new}
-          accent={{ bg: "bg-gray-100", text: "text-gray-500" }}
-        />
-        <StatCard
-          icon={Clock}
-          label="In progress"
-          value={stats.inProgress}
-          accent={{ bg: "bg-[#E8871E]/10", text: "text-[#E8871E]" }}
-        />
-        <StatCard
-          icon={CheckCircle2}
-          label="Resolved"
-          value={stats.resolved}
-          accent={{ bg: "bg-emerald-50", text: "text-emerald-600" }}
-        />
+        <StatCard icon={Layers} label="Total tickets" value={stats.total} />
+        <StatCard icon={Inbox} label="New" value={stats.new} />
+        <StatCard icon={Clock} label="In progress" value={stats.inProgress} />
+        <StatCard icon={CheckCircle2} label="Resolved" value={stats.resolved} />
       </div>
 
       {!loading && tickets.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <h3 className="text-sm font-semibold text-[#14213D] mb-4">
-              Ticket Status
-            </h3>
+          <div
+            className="rounded-2xl p-5"
+            style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+          >
+            <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Ticket Status</h3>
             <div className="flex items-center gap-6">
               <div className="w-32 h-32 shrink-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie
-                      data={statusChartData}
-                      dataKey="value"
-                      innerRadius={35}
-                      outerRadius={55}
-                      paddingAngle={2}
-                    >
+                    <Pie data={statusChartData} dataKey="value" innerRadius={35} outerRadius={55} paddingAngle={2}>
                       {statusChartData.map((entry, i) => (
                         <Cell key={i} fill={entry.color} />
                       ))}
@@ -193,41 +129,34 @@ const Dashboard = () => {
               </div>
               <div className="space-y-2 flex-1">
                 {statusChartData.map((d) => (
-                  <div
-                    key={d.name}
-                    className="flex items-center justify-between text-xs"
-                  >
-                    <span className="flex items-center gap-2 text-gray-600">
-                      <span
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: d.color }}
-                      ></span>
+                  <div key={d.name} className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }}></span>
                       {d.name}
                     </span>
-                    <span className="font-semibold text-[#14213D]">
-                      {d.value}
-                    </span>
+                    <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{d.value}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-5">
-            <h3 className="text-sm font-semibold text-[#14213D] mb-4">
-              Tickets by Category
-            </h3>
+          <div
+            className="rounded-2xl p-5"
+            style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+          >
+            <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Tickets by Category</h3>
             <ResponsiveContainer width="100%" height={160}>
               <BarChart data={categoryChartData}>
                 <XAxis
                   dataKey="name"
-                  tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                  axisLine={{ stroke: "#F3F4F6" }}
+                  tick={{ fontSize: 11, fill: 'var(--text-muted)' }}
+                  axisLine={{ stroke: 'var(--border-color)' }}
                   tickLine={false}
                 />
                 <YAxis hide />
-                <Tooltip cursor={{ fill: "#F7F7F5" }} />
-                <Bar dataKey="count" fill="#2A6F6F" radius={[6, 6, 0, 0]} />
+                <Tooltip cursor={{ fill: 'var(--bg-surface-hover)' }} />
+                <Bar dataKey="count" fill="var(--accent)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -235,15 +164,16 @@ const Dashboard = () => {
       )}
 
       <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
-        {["All", "New", "Assigned", "In Progress", "Resolved"].map((s) => (
+        {['All', 'New', 'Assigned', 'In Progress', 'Resolved'].map((s) => (
           <button
             key={s}
             onClick={() => setStatusFilter(s)}
-            className={`text-sm px-3.5 py-1.5 rounded-full border whitespace-nowrap transition-colors ${
+            className="text-sm px-3.5 py-1.5 rounded-full whitespace-nowrap transition-colors"
+            style={
               statusFilter === s
-                ? "bg-[#14213D] text-white border-[#14213D]"
-                : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
-            }`}
+                ? { backgroundColor: 'var(--accent)', color: 'white', border: '1px solid var(--accent)' }
+                : { backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' }
+            }
           >
             {s}
           </button>
@@ -251,7 +181,10 @@ const Dashboard = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
+        <div
+          className="text-sm rounded-lg p-3 mb-4"
+          style={{ backgroundColor: 'var(--highlight-soft)', color: 'var(--highlight)' }}
+        >
           {error}
         </div>
       )}
@@ -261,13 +194,17 @@ const Dashboard = () => {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="bg-white border border-gray-100 rounded-2xl p-5 h-24 animate-pulse"
+              className="rounded-2xl p-5 h-24 animate-pulse"
+              style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
             />
           ))}
         </div>
       ) : filteredTickets.length === 0 ? (
-        <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center">
-          <p className="text-gray-400">No tickets match this filter.</p>
+        <div
+          className="rounded-2xl p-12 text-center"
+          style={{ backgroundColor: 'var(--bg-surface)', border: '1px dashed var(--border-color)' }}
+        >
+          <p style={{ color: 'var(--text-muted)' }}>No tickets match this filter.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -275,24 +212,19 @@ const Dashboard = () => {
             <Link
               key={t._id}
               to={`/tickets/${t._id}`}
-              className="group flex items-center justify-between bg-white border border-gray-100 rounded-2xl p-5 hover:border-[#2A6F6F]/30 hover:shadow-md transition-all duration-200"
+              className="group flex items-center justify-between rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5"
+              style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-3 mb-1.5">
-                  <span className="font-medium text-[#14213D] truncate">
-                    {t.subject}
-                  </span>
+                  <span className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{t.subject}</span>
                   <StatusBadge status={t.status} />
                 </div>
-                <div className="flex items-center gap-3 text-xs text-gray-400">
+                <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
                   <span className="font-mono">{t.ticketNumber}</span>
                   <span>{t.category}</span>
-                  <span
-                    className={`inline-flex items-center gap-1 ${priorityStyles[t.priority]?.text}`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${priorityStyles[t.priority]?.dot}`}
-                    ></span>
+                  <span className="inline-flex items-center gap-1" style={{ color: priorityStyles[t.priority] }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: priorityStyles[t.priority] }}></span>
                     {t.priority}
                   </span>
                   <span className="inline-flex items-center gap-1">
@@ -303,7 +235,8 @@ const Dashboard = () => {
               </div>
               <ArrowRight
                 size={18}
-                className="text-gray-300 group-hover:text-[#2A6F6F] group-hover:translate-x-1 transition-all duration-200 shrink-0 ml-4"
+                className="shrink-0 ml-4 transition-transform group-hover:translate-x-1"
+                style={{ color: 'var(--text-muted)' }}
               />
             </Link>
           ))}

@@ -1,4 +1,3 @@
-// frontend/src/pages/TicketDetail.jsx
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -28,22 +27,22 @@ import {
 const CATEGORIES = ["Billing", "Technical", "General", "Account", "Other"];
 const PRIORITIES = ["Low", "Medium", "High"];
 
-const statusStyles = {
-  New: { bg: "bg-gray-100", text: "text-gray-600", dot: "bg-gray-400" },
-  Assigned: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
-  "In Progress": { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-[#E8871E]" },
-  Resolved: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
+const statusColors = {
+  New: "#9CA3AF",
+  Assigned: "#60A5FA",
+  "In Progress": "#FB7185",
+  Resolved: "#34D399",
 };
 
-const StatusBadge = ({ status }) => {
-  const s = statusStyles[status] || statusStyles.New;
-  return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${s.bg} ${s.text}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`}></span>
-      {status}
-    </span>
-  );
-};
+const StatusBadge = ({ status }) => (
+  <span
+    className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
+    style={{ backgroundColor: `${statusColors[status]}20`, color: statusColors[status] }}
+  >
+    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusColors[status] }}></span>
+    {status}
+  </span>
+);
 
 const TicketDetail = () => {
   const { id } = useParams();
@@ -75,6 +74,17 @@ const TicketDetail = () => {
   const [savingEdit, setSavingEdit] = useState(false);
 
   const isAgent = user?.role === "agent" || user?.role === "admin";
+
+  const inputStyle = {
+    backgroundColor: 'var(--bg-surface-hover)',
+    color: 'var(--text-primary)',
+    border: '1px solid var(--border-color)',
+  };
+
+  const cardStyle = {
+    backgroundColor: 'var(--bg-surface)',
+    border: '1px solid var(--border-color)',
+  };
 
   const loadTicket = async () => {
     try {
@@ -216,7 +226,10 @@ const TicketDetail = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="w-6 h-6 border-2 border-[#2A6F6F] border-t-transparent rounded-full animate-spin" />
+        <div
+          className="w-6 h-6 border-2 rounded-full animate-spin"
+          style={{ borderColor: 'var(--accent)', borderTopColor: 'transparent' }}
+        />
       </div>
     );
   }
@@ -224,7 +237,12 @@ const TicketDetail = () => {
   if (error) {
     return (
       <div className="max-w-2xl">
-        <p className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">{error}</p>
+        <p
+          className="text-sm rounded-lg p-3"
+          style={{ backgroundColor: 'var(--highlight-soft)', color: 'var(--highlight)' }}
+        >
+          {error}
+        </p>
       </div>
     );
   }
@@ -233,41 +251,45 @@ const TicketDetail = () => {
     <div className="max-w-2xl">
       <button
         onClick={() => navigate(isAgent ? "/dashboard" : "/my-tickets")}
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#2A6F6F] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm mb-4 transition-colors"
+        style={{ color: 'var(--text-secondary)' }}
       >
         <ArrowLeft size={16} />
         Back
       </button>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-4">
+      <div className="rounded-2xl p-6 mb-4" style={cardStyle}>
         {isEditing ? (
           <form onSubmit={handleUpdateTicket} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[#14213D] mb-1">Subject</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Subject</label>
               <input
                 type="text"
                 value={editSubject}
                 onChange={(e) => setEditSubject(e.target.value)}
-                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
+                className="w-full p-2 rounded-lg text-sm focus:outline-none"
+                style={inputStyle}
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#14213D] mb-1">Description</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Description</label>
               <textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
                 rows={4}
-                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
+                className="w-full p-2 rounded-lg text-sm focus:outline-none"
+                style={inputStyle}
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#14213D] mb-1">Category</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Category</label>
               <select
                 value={editCategory}
                 onChange={(e) => setEditCategory(e.target.value)}
-                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
+                className="w-full p-2 rounded-lg text-sm focus:outline-none"
+                style={inputStyle}
               >
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -278,14 +300,16 @@ const TicketDetail = () => {
               <button
                 type="submit"
                 disabled={savingEdit}
-                className="bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors disabled:opacity-50"
+                className="text-white px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: 'var(--accent)' }}
               >
                 {savingEdit ? "Saving..." : "Save Changes"}
               </button>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium"
+                style={{ backgroundColor: 'var(--bg-surface-hover)', color: 'var(--text-secondary)' }}
               >
                 Cancel
               </button>
@@ -294,20 +318,21 @@ const TicketDetail = () => {
         ) : (
           <>
             <div className="flex justify-between items-start mb-2">
-              <h1 className="font-display text-xl font-semibold text-[#14213D]">{ticket.subject}</h1>
+              <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{ticket.subject}</h1>
               <StatusBadge status={ticket.status} />
             </div>
-            <p className="text-xs text-gray-400 font-mono mb-3">
+            <p className="text-xs font-mono mb-3" style={{ color: 'var(--text-muted)' }}>
               {ticket.ticketNumber} · {ticket.category} · {ticket.priority} priority
             </p>
-            <p className="text-gray-600 text-sm mb-4 leading-relaxed">{ticket.description}</p>
-            <p className="text-xs text-gray-400 mb-3">
+            <p className="text-sm mb-4 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{ticket.description}</p>
+            <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
               {ticket.customer?.name} → {ticket.assignedAgent?.name || "Unassigned"}
             </p>
             {!isAgent && ticket.status !== "Resolved" && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="inline-flex items-center gap-1.5 text-sm text-[#2A6F6F] hover:underline font-medium"
+                className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
+                style={{ color: 'var(--accent)' }}
               >
                 <Pencil size={14} />
                 Edit Ticket
@@ -318,25 +343,34 @@ const TicketDetail = () => {
       </div>
 
       {actionError && (
-        <p className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm mb-4">{actionError}</p>
+        <p
+          className="text-sm rounded-lg p-3 mb-4"
+          style={{ backgroundColor: 'var(--highlight-soft)', color: 'var(--highlight)' }}
+        >
+          {actionError}
+        </p>
       )}
 
       {isAgent && ticket.aiSuggestion?.summary && (
-        <div className="bg-white border border-[#E8871E]/20 rounded-2xl p-5 mb-4">
+        <div className="rounded-2xl p-5 mb-4" style={{ ...cardStyle, borderColor: 'var(--accent)' }}>
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 rounded-lg bg-[#E8871E]/15 flex items-center justify-center">
-              <Sparkles size={14} className="text-[#E8871E]" strokeWidth={2} />
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: 'var(--accent-soft)' }}
+            >
+              <Sparkles size={14} style={{ color: 'var(--accent)' }} strokeWidth={2} />
             </div>
-            <h3 className="font-semibold text-[#14213D] text-sm">AI Suggestion</h3>
+            <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>AI Suggestion</h3>
           </div>
-          <p className="text-sm text-gray-600 mb-4">{ticket.aiSuggestion.summary}</p>
+          <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>{ticket.aiSuggestion.summary}</p>
           <div className="flex gap-3 mb-3">
             <div className="flex-1">
-              <label className="block text-xs font-medium text-gray-500 mb-1">Category</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Category</label>
               <select
                 value={reviewCategory}
                 onChange={(e) => setReviewCategory(e.target.value)}
-                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
+                className="w-full p-2 rounded-lg text-sm focus:outline-none"
+                style={inputStyle}
                 disabled={ticket.status === "Resolved"}
               >
                 {CATEGORIES.map((c) => (
@@ -345,11 +379,12 @@ const TicketDetail = () => {
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-xs font-medium text-gray-500 mb-1">Priority</label>
+              <label className="block text-xs font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Priority</label>
               <select
                 value={reviewPriority}
                 onChange={(e) => setReviewPriority(e.target.value)}
-                className="w-full border border-gray-200 p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
+                className="w-full p-2 rounded-lg text-sm focus:outline-none"
+                style={inputStyle}
                 disabled={ticket.status === "Resolved"}
               >
                 {PRIORITIES.map((p) => (
@@ -362,7 +397,8 @@ const TicketDetail = () => {
             <button
               onClick={handleSaveReview}
               disabled={savingReview}
-              className="bg-[#14213D] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#1e2d54] transition-colors disabled:opacity-50"
+              className="text-white px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: 'var(--accent)' }}
             >
               {savingReview ? "Saving..." : "Confirm & Save"}
             </button>
@@ -371,7 +407,10 @@ const TicketDetail = () => {
       )}
 
       {isAgent && ticket.aiSuggestion?.failed && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4 text-sm text-amber-800 flex items-start gap-2">
+        <div
+          className="rounded-2xl p-4 mb-4 text-sm flex items-start gap-2"
+          style={{ backgroundColor: 'var(--highlight-soft)', color: 'var(--highlight)' }}
+        >
           <AlertTriangle size={16} className="shrink-0 mt-0.5" />
           AI suggestion unavailable — set category and priority manually above.
         </div>
@@ -381,7 +420,8 @@ const TicketDetail = () => {
         {isAgent && !ticket.assignedAgent && ticket.status !== "Resolved" && (
           <button
             onClick={handleAssignToMe}
-            className="inline-flex items-center gap-2 bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors"
+            className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
+            style={{ backgroundColor: 'var(--accent)' }}
           >
             <UserPlus size={16} />
             Assign to Me
@@ -391,7 +431,8 @@ const TicketDetail = () => {
         {isAgent && ticket.assignedAgent && ticket.status === "Assigned" && (
           <button
             onClick={() => handleStatusChange("In Progress")}
-            className="inline-flex items-center gap-2 bg-[#E8871E] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#d47818] transition-colors"
+            className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-90"
+            style={{ backgroundColor: 'var(--highlight)' }}
           >
             <Clock size={16} />
             Mark In Progress
@@ -401,7 +442,8 @@ const TicketDetail = () => {
         {isAgent && ticket.status === "Resolved" && (
           <button
             onClick={handleReopen}
-            className="inline-flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium"
+            style={{ backgroundColor: 'var(--bg-surface-hover)', color: 'var(--text-secondary)' }}
           >
             <RotateCcw size={16} />
             Reopen Ticket
@@ -409,25 +451,26 @@ const TicketDetail = () => {
         )}
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-4">
-        <h3 className="font-semibold text-[#14213D] text-sm mb-3">Conversation</h3>
+      <div className="rounded-2xl p-5 mb-4" style={cardStyle}>
+        <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-primary)' }}>Conversation</h3>
         <div className="space-y-3 max-h-80 overflow-y-auto mb-4 pr-1">
           {messages.length === 0 && (
-            <p className="text-sm text-gray-400">No messages yet.</p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No messages yet.</p>
           )}
           {messages.map((m) => (
-            <div
-              key={m._id}
-              className={`flex ${m.senderRole === "agent" ? "justify-end" : "justify-start"}`}
-            >
+            <div key={m._id} className={`flex ${m.senderRole === "agent" ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-xs px-3.5 py-2.5 rounded-2xl text-sm ${
+                className="max-w-xs px-3.5 py-2.5 rounded-2xl text-sm"
+                style={
                   m.senderRole === "agent"
-                    ? "bg-[#2A6F6F] text-white rounded-br-sm"
-                    : "bg-gray-100 text-gray-800 rounded-bl-sm"
-                }`}
+                    ? { backgroundColor: 'var(--accent)', color: 'white', borderBottomRightRadius: '4px' }
+                    : { backgroundColor: 'var(--bg-surface-hover)', color: 'var(--text-primary)', borderBottomLeftRadius: '4px' }
+                }
               >
-                <p className={`text-xs mb-0.5 ${m.senderRole === "agent" ? "text-white/70" : "text-gray-400"}`}>
+                <p
+                  className="text-xs mb-0.5"
+                  style={{ color: m.senderRole === "agent" ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)' }}
+                >
                   {m.sender?.name}
                 </p>
                 <p>{m.text}</p>
@@ -444,37 +487,41 @@ const TicketDetail = () => {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
+              className="flex-1 p-2.5 rounded-lg text-sm focus:outline-none"
+              style={inputStyle}
             />
             <button
               type="submit"
               disabled={sending}
-              className="inline-flex items-center gap-2 bg-[#2A6F6F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#235c5c] transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: 'var(--accent)' }}
             >
               <Send size={16} />
             </button>
           </form>
         ) : (
-          <p className="text-sm text-gray-400">Ticket resolved — conversation closed.</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Ticket resolved — conversation closed.</p>
         )}
       </div>
 
       {isAgent && ticket.status === "In Progress" && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-5">
-          <h3 className="font-semibold text-[#14213D] text-sm mb-3">Resolve Ticket</h3>
+        <div className="rounded-2xl p-5" style={cardStyle}>
+          <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-primary)' }}>Resolve Ticket</h3>
           <form onSubmit={handleResolve} className="space-y-3">
             <textarea
               value={resolutionNote}
               onChange={(e) => setResolutionNote(e.target.value)}
               placeholder="Resolution note (required)"
               rows={3}
-              className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30"
+              className="w-full p-2.5 rounded-lg text-sm focus:outline-none"
+              style={inputStyle}
               required
             />
             <button
               type="submit"
               disabled={resolving}
-              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: '#34D399' }}
             >
               <CheckCircle2 size={16} />
               {resolving ? "Resolving..." : "Mark as Resolved"}
@@ -484,12 +531,12 @@ const TicketDetail = () => {
       )}
 
       {ticket.status === "Resolved" && ticket.resolutionNote && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
-          <h3 className="font-semibold text-emerald-800 text-sm mb-1 flex items-center gap-1.5">
+        <div className="rounded-2xl p-5" style={{ backgroundColor: 'rgba(52, 211, 153, 0.1)', border: '1px solid rgba(52, 211, 153, 0.3)' }}>
+          <h3 className="font-semibold text-sm mb-1 flex items-center gap-1.5" style={{ color: '#34D399' }}>
             <CheckCircle2 size={16} />
             Resolution
           </h3>
-          <p className="text-sm text-emerald-700">{ticket.resolutionNote}</p>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{ticket.resolutionNote}</p>
         </div>
       )}
     </div>

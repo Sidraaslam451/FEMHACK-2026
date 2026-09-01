@@ -1,4 +1,3 @@
-// frontend/src/pages/CreateTicket.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createTicket } from '../api/tickets.js';
@@ -28,56 +27,75 @@ const CreateTicket = () => {
     }
   };
 
+  const inputStyle = {
+    backgroundColor: 'var(--bg-surface-hover)',
+    color: 'var(--text-primary)',
+    border: '1px solid var(--border-color)',
+  };
+
   return (
     <div className="max-w-2xl">
       <button
         onClick={() => navigate('/my-tickets')}
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#2A6F6F] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm mb-4 transition-colors"
+        style={{ color: 'var(--text-secondary)' }}
       >
         <ArrowLeft size={16} />
         My tickets
       </button>
 
-      <h1 className="font-display text-2xl font-semibold text-[#14213D] mb-1">New Support Ticket</h1>
-      <p className="text-sm text-gray-500 mb-6">Tell us what's going on — we'll route it to the right agent.</p>
+      <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>New Support Ticket</h1>
+      <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
+        Tell us what's going on — we'll route it to the right agent.
+      </p>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
+        <div
+          className="text-sm rounded-lg p-3 mb-4"
+          style={{ backgroundColor: 'var(--highlight-soft)', color: 'var(--highlight)' }}
+        >
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-100 rounded-2xl p-6 space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-2xl p-6 space-y-5"
+        style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+      >
         <div>
-          <label className="block text-sm font-medium text-[#14213D] mb-1.5">Subject</label>
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>Subject</label>
           <input
             type="text"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             placeholder="Brief summary of the issue"
-            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F] transition-shadow"
+            className="w-full p-2.5 rounded-lg text-sm focus:outline-none"
+            style={inputStyle}
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-[#14213D] mb-1.5">Description</label>
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="What happened? Include any relevant details."
             rows={5}
-            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F] transition-shadow"
+            className="w-full p-2.5 rounded-lg text-sm focus:outline-none"
+            style={inputStyle}
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-[#14213D] mb-1.5">Category</label>
+          <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-primary)' }}>Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full border border-gray-200 p-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A6F6F]/30 focus:border-[#2A6F6F] transition-shadow"
+            className="w-full p-2.5 rounded-lg text-sm focus:outline-none"
+            style={inputStyle}
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -85,11 +103,9 @@ const CreateTicket = () => {
           </select>
         </div>
 
-        <div className="bg-[#F7F7F5] rounded-xl p-4 flex items-start gap-3">
-          <div className="w-7 h-7 rounded-lg bg-[#E8871E]/15 flex items-center justify-center shrink-0">
-            <Sparkles size={14} className="text-[#E8871E]" strokeWidth={2} />
-          </div>
-          <p className="text-xs text-gray-500 leading-relaxed">
+        <div className="rounded-xl p-4 flex items-start gap-3" style={{ backgroundColor: 'var(--accent-soft)' }}>
+          <Sparkles size={16} style={{ color: 'var(--accent)' }} className="mt-0.5 shrink-0" />
+          <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
             AI will suggest a category, priority, and summary for the agent to review before your ticket is assigned.
           </p>
         </div>
@@ -97,7 +113,8 @@ const CreateTicket = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#2A6F6F] text-white font-medium p-3 rounded-lg hover:bg-[#235c5c] transition-colors disabled:opacity-50"
+          className="w-full text-white font-medium p-3 rounded-lg transition-opacity hover:opacity-90 disabled:opacity-50"
+          style={{ backgroundColor: 'var(--accent)' }}
         >
           {loading ? 'Submitting...' : 'Submit Ticket'}
         </button>

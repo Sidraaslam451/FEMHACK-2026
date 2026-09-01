@@ -1,10 +1,9 @@
+// frontend/src/components/ChatWidget.jsx
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
 import { sendChatMessage } from '../api/chat.js';
-import { useAuth } from '../context/useAuth.js';
 
 const ChatWidget = () => {
-  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { role: 'assistant', text: "Hi! I'm here to help you use SupportFlow. Ask me anything." },
@@ -16,8 +15,6 @@ const ChatWidget = () => {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isOpen]);
-
-  if (!user) return null;
 
   const handleSend = async (e) => {
     e.preventDefault();

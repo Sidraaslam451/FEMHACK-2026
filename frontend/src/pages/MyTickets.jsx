@@ -4,28 +4,28 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getTickets } from '../api/tickets.js';
 import { CheckCircle2, ArrowRight, Plus } from 'lucide-react';
 
-const statusStyles = {
-  New: { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400' },
-  Assigned: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
-  'In Progress': { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-[#E8871E]' },
-  Resolved: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
+const statusColors = {
+  New: '#9CA3AF',
+  Assigned: '#60A5FA',
+  'In Progress': '#FB7185',
+  Resolved: '#34D399',
 };
 
 const priorityStyles = {
-  Low: { text: 'text-emerald-600', dot: 'bg-emerald-500' },
-  Medium: { text: 'text-amber-600', dot: 'bg-amber-500' },
-  High: { text: 'text-red-600', dot: 'bg-red-500' },
+  Low: '#34D399',
+  Medium: '#FBBF24',
+  High: '#FB7185',
 };
 
-const StatusBadge = ({ status }) => {
-  const s = statusStyles[status] || statusStyles.New;
-  return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${s.bg} ${s.text}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`}></span>
-      {status}
-    </span>
-  );
-};
+const StatusBadge = ({ status }) => (
+  <span
+    className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full"
+    style={{ backgroundColor: `${statusColors[status]}20`, color: statusColors[status] }}
+  >
+    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusColors[status] }}></span>
+    {status}
+  </span>
+);
 
 const MyTickets = () => {
   const [tickets, setTickets] = useState([]);
@@ -52,12 +52,15 @@ const MyTickets = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-display text-2xl font-semibold text-[#14213D]">My Tickets</h1>
-          <p className="text-sm text-gray-500 mt-1">Track and manage your support requests</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>My Tickets</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+            Track and manage your support requests
+          </p>
         </div>
         <button
           onClick={() => navigate('/new-ticket')}
-          className="inline-flex items-center gap-2 bg-[#2A6F6F] text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-[#235c5c] transition-colors"
+          className="inline-flex items-center gap-2 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-opacity hover:opacity-90"
+          style={{ backgroundColor: 'var(--accent)' }}
         >
           <Plus size={16} strokeWidth={2.5} />
           New Ticket
@@ -65,7 +68,10 @@ const MyTickets = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
+        <div
+          className="text-sm rounded-lg p-3 mb-4"
+          style={{ backgroundColor: 'var(--highlight-soft)', color: 'var(--highlight)' }}
+        >
           {error}
         </div>
       )}
@@ -73,17 +79,29 @@ const MyTickets = () => {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white border border-gray-100 rounded-2xl p-5 h-20 animate-pulse" />
+            <div
+              key={i}
+              className="rounded-2xl p-5 h-20 animate-pulse"
+              style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+            />
           ))}
         </div>
       ) : tickets.length === 0 ? (
-        <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center">
-          <div className="w-12 h-12 rounded-full bg-[#2A6F6F]/10 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle2 size={22} className="text-[#2A6F6F]" strokeWidth={2} />
+        <div
+          className="rounded-2xl p-12 text-center"
+          style={{ backgroundColor: 'var(--bg-surface)', border: '1px dashed var(--border-color)' }}
+        >
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
+            style={{ backgroundColor: 'var(--accent-soft)' }}
+          >
+            <CheckCircle2 size={22} style={{ color: 'var(--accent)' }} strokeWidth={2} />
           </div>
-          <p className="text-gray-500 font-medium mb-1">No tickets yet</p>
-          <p className="text-gray-400 text-sm mb-4">Everything's running smoothly — or you haven't needed help.</p>
-          <Link to="/new-ticket" className="text-[#2A6F6F] text-sm font-medium hover:underline">
+          <p className="font-medium mb-1" style={{ color: 'var(--text-secondary)' }}>No tickets yet</p>
+          <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
+            Everything's running smoothly — or you haven't needed help.
+          </p>
+          <Link to="/new-ticket" className="text-sm font-medium hover:underline" style={{ color: 'var(--accent)' }}>
             Submit your first ticket →
           </Link>
         </div>
@@ -93,25 +111,27 @@ const MyTickets = () => {
             <Link
               key={t._id}
               to={`/tickets/${t._id}`}
-              className="group flex items-center justify-between bg-white border border-gray-100 rounded-2xl p-5 hover:border-[#2A6F6F]/30 hover:shadow-md transition-all duration-200"
+              className="group flex items-center justify-between rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5"
+              style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-3 mb-1.5">
-                  <span className="font-medium text-[#14213D] truncate">{t.subject}</span>
+                  <span className="font-medium truncate" style={{ color: 'var(--text-primary)' }}>{t.subject}</span>
                   <StatusBadge status={t.status} />
                 </div>
-                <div className="flex items-center gap-3 text-xs text-gray-400">
+                <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
                   <span className="font-mono">{t.ticketNumber}</span>
                   <span>{t.category}</span>
-                  <span className={`inline-flex items-center gap-1 ${priorityStyles[t.priority]?.text}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${priorityStyles[t.priority]?.dot}`}></span>
+                  <span className="inline-flex items-center gap-1" style={{ color: priorityStyles[t.priority] }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: priorityStyles[t.priority] }}></span>
                     {t.priority}
                   </span>
                 </div>
               </div>
               <ArrowRight
                 size={18}
-                className="text-gray-300 group-hover:text-[#2A6F6F] group-hover:translate-x-1 transition-all duration-200 shrink-0 ml-4"
+                className="shrink-0 ml-4 transition-transform group-hover:translate-x-1"
+                style={{ color: 'var(--text-muted)' }}
               />
             </Link>
           ))}
