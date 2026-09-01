@@ -24,13 +24,13 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-const CATEGORIES = ["Billing", "Technical", "General", "Account", "Other"];
+const CATEGORIES = ['Load Shedding Complaint', 'Billing Dispute', 'Meter Issue', 'New Connection', 'Voltage Fluctuation', 'Power Outage', 'Other'];
 const PRIORITIES = ["Low", "Medium", "High"];
 
 const statusColors = {
   New: "#9CA3AF",
   Assigned: "#60A5FA",
-  "In Progress": "#FB7185",
+  "In Progress": "#F5B301",
   Resolved: "#34D399",
 };
 
@@ -335,7 +335,7 @@ const TicketDetail = () => {
                 style={{ color: 'var(--accent)' }}
               >
                 <Pencil size={14} />
-                Edit Ticket
+                Edit Complaint
               </button>
             )}
           </>
@@ -446,7 +446,7 @@ const TicketDetail = () => {
             style={{ backgroundColor: 'var(--bg-surface-hover)', color: 'var(--text-secondary)' }}
           >
             <RotateCcw size={16} />
-            Reopen Ticket
+            Reopen Complaint
           </button>
         )}
       </div>
@@ -500,13 +500,13 @@ const TicketDetail = () => {
             </button>
           </form>
         ) : (
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Ticket resolved — conversation closed.</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Complaint resolved — conversation closed.</p>
         )}
       </div>
 
       {isAgent && ticket.status === "In Progress" && (
         <div className="rounded-2xl p-5" style={cardStyle}>
-          <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-primary)' }}>Resolve Ticket</h3>
+          <h3 className="font-semibold text-sm mb-3" style={{ color: 'var(--text-primary)' }}>Resolve Complaint</h3>
           <form onSubmit={handleResolve} className="space-y-3">
             <textarea
               value={resolutionNote}

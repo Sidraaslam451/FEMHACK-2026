@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createTicket } from '../api/tickets.js';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 
-const CATEGORIES = ['Billing', 'Technical', 'General', 'Account', 'Other'];
+const CATEGORIES = ['Load Shedding Complaint', 'Billing Dispute', 'Meter Issue', 'New Connection', 'Voltage Fluctuation', 'Power Outage', 'Other'];
 
 const CreateTicket = () => {
   const [subject, setSubject] = useState('');
@@ -41,10 +41,10 @@ const CreateTicket = () => {
         style={{ color: 'var(--text-secondary)' }}
       >
         <ArrowLeft size={16} />
-        My tickets
+        My complaints
       </button>
 
-      <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>New Support Ticket</h1>
+      <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>Report an Issue</h1>
       <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
         Tell us what's going on — we'll route it to the right agent.
       </p>
@@ -81,7 +81,7 @@ const CreateTicket = () => {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="What happened? Include any relevant details."
+            placeholder="What happened? Include your account/meter number if relevant."
             rows={5}
             className="w-full p-2.5 rounded-lg text-sm focus:outline-none"
             style={inputStyle}
@@ -106,7 +106,7 @@ const CreateTicket = () => {
         <div className="rounded-xl p-4 flex items-start gap-3" style={{ backgroundColor: 'var(--accent-soft)' }}>
           <Sparkles size={16} style={{ color: 'var(--accent)' }} className="mt-0.5 shrink-0" />
           <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            AI will suggest a category, priority, and summary for the agent to review before your ticket is assigned.
+            AI will suggest a category, priority, and summary for the agent to review before your complaint is assigned.
           </p>
         </div>
 
@@ -116,7 +116,7 @@ const CreateTicket = () => {
           className="w-full text-white font-medium p-3 rounded-lg transition-opacity hover:opacity-90 disabled:opacity-50"
           style={{ backgroundColor: 'var(--accent)' }}
         >
-          {loading ? 'Submitting...' : 'Submit Ticket'}
+          {loading ? 'Submitting...' : 'Submit Complaint'}
         </button>
       </form>
     </div>

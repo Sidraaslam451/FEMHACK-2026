@@ -11,6 +11,8 @@ import errorHandler from "./middleware/errorHandler.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import ticketRoutes from './routes/ticketRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import statsRoutes from './routes/statsRoutes.js';
+
 
 dotenv.config();
 
@@ -59,6 +61,7 @@ app.use("/api/items", itemRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/stats', statsRoutes);
 
 app.use(errorHandler);
 
