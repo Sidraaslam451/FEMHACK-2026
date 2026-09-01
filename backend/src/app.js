@@ -10,7 +10,7 @@ import itemRoutes from "./routes/itemRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import ticketRoutes from './routes/ticketRoutes.js';
-
+import chatRoutes from './routes/chatRoutes.js';
 
 dotenv.config();
 
@@ -58,6 +58,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.use(errorHandler);
 
