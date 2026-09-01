@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Bot } from 'lucide-react';
 import { sendChatMessage } from '../api/chat.js';
 
 const ChatWidget = () => {
@@ -55,7 +55,7 @@ const ChatWidget = () => {
             style={{ background: 'linear-gradient(135deg, var(--accent), var(--highlight))' }}
           >
             <div className="flex items-center gap-2">
-              <Sparkles size={16} className="text-white" />
+              <Bot size={16} className="text-white" />
               <span className="text-sm font-semibold text-white">AI Assistant</span>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white">
@@ -135,7 +135,7 @@ const ChatWidget = () => {
             className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
             style={{ background: 'linear-gradient(135deg, var(--accent), var(--highlight))' }}
           >
-            <Sparkles size={14} className="text-white" />
+            <Bot size={14} className="text-white" />
           </div>
           <div>
             <p className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>AI Assistant</p>
