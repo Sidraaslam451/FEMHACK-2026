@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const ticketSchema = new mongoose.Schema(
   {
@@ -7,23 +7,39 @@ const ticketSchema = new mongoose.Schema(
     subject: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
 
-    customer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    assignedAgent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    customer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    assignedAgent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
 
     category: {
       type: String,
-      enum: ['Billing', 'Technical', 'General', 'Account', 'Other'],
-      default: 'Other',
+      enum: [
+        "Load Shedding Complaint",
+        "Billing Dispute",
+        "Meter Issue",
+        "New Connection",
+        "Voltage Fluctuation",
+        "Power Outage",
+        "Other",
+      ],
+      default: "Other",
     },
     priority: {
       type: String,
-      enum: ['Low', 'Medium', 'High'],
-      default: 'Medium',
+      enum: ["Low", "Medium", "High"],
+      default: "Medium",
     },
     status: {
       type: String,
-      enum: ['New', 'Assigned', 'In Progress', 'Resolved'],
-      default: 'New',
+      enum: ["New", "Assigned", "In Progress", "Resolved"],
+      default: "New",
     },
 
     aiSuggestion: {
@@ -37,8 +53,8 @@ const ticketSchema = new mongoose.Schema(
     resolutionNote: { type: String, default: null },
     resolvedAt: { type: Date, default: null },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const Ticket = mongoose.model('Ticket', ticketSchema);
+const Ticket = mongoose.model("Ticket", ticketSchema);
 export default Ticket;

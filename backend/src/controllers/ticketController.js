@@ -262,10 +262,12 @@ export const reviewAiSuggestion = async (req, res, next) => {
     const { category, priority } = req.body;
 
     const validCategories = [
-      "Billing",
-      "Technical",
-      "General",
-      "Account",
+      "Load Shedding Complaint",
+      "Billing Dispute",
+      "Meter Issue",
+      "New Connection",
+      "Voltage Fluctuation",
+      "Power Outage",
       "Other",
     ];
     const validPriorities = ["Low", "Medium", "High"];
@@ -314,21 +316,23 @@ export const updateTicket = async (req, res, next) => {
     const ticket = await Ticket.findById(req.params.id);
 
     if (!ticket) {
-      const err = new Error('Ticket not found');
+      const err = new Error("Ticket not found");
       err.statusCode = 404;
       throw err;
     }
 
     const isOwner = ticket.customer.toString() === req.user._id.toString();
 
-    if (req.user.role === 'customer' && !isOwner) {
-      const err = new Error('Not authorized to update this ticket');
+    if (req.user.role === "customer" && !isOwner) {
+      const err = new Error("Not authorized to update this ticket");
       err.statusCode = 403;
       throw err;
     }
 
-    if (ticket.status === 'Resolved') {
-      const err = new Error('Resolved ticket cannot be updated. Reopen it first.');
+    if (ticket.status === "Resolved") {
+      const err = new Error(
+        "Resolved ticket cannot be updated. Reopen it first.",
+      );
       err.statusCode = 400;
       throw err;
     }
@@ -338,10 +342,7 @@ export const updateTicket = async (req, res, next) => {
     if (category) ticket.category = category;
 
     if (subject || description) {
-      const aiResult = await triageTicket(
-        ticket.subject,
-        ticket.description
-      );
+      const aiResult = await triageTicket(ticket.subject, ticket.description);
       ticket.aiSuggestion = {
         category: aiResult.category,
         priority: aiResult.priority,
