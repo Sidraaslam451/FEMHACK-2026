@@ -612,6 +612,139 @@ const Home = () => {
         </div>
       </div>
 
+
+<div className="max-w-5xl mx-auto px-6 pb-20">
+        <Reveal className="text-center mb-10">
+          <div
+            className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-3"
+            style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}
+          >
+            WHY AI TRIAGE
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+            Why manual triage falls behind
+          </h2>
+          <p className="text-sm max-w-lg mx-auto" style={{ color: 'var(--text-secondary)' }}>
+            Support teams handling hundreds of complaints a day can't manually read, categorize,
+            and prioritize every single one fast enough. Here's what changes with AI in the loop.
+          </p>
+        </Reveal>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <Reveal>
+            <div
+              className="rounded-2xl p-6 h-full"
+              style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+            >
+              <p className="text-xs font-semibold mb-3 uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
+                Without AI Triage
+              </p>
+              <ul className="space-y-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: 'var(--text-muted)' }} />
+                  Agents read every complaint from scratch to figure out urgency
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: 'var(--text-muted)' }} />
+                  Critical outages can sit in a queue behind minor billing questions
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: 'var(--text-muted)' }} />
+                  Categorization is inconsistent between different agents
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: 'var(--text-muted)' }} />
+                  No summary — agents re-read the full description every time
+                </li>
+              </ul>
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <div
+              className="rounded-2xl p-6 h-full"
+              style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--accent)' }}
+            >
+              <p className="text-xs font-semibold mb-3 uppercase tracking-wide" style={{ color: 'var(--accent)' }}>
+                With PowerConnect AI Triage
+              </p>
+              <ul className="space-y-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} style={{ color: 'var(--accent)' }} className="shrink-0 mt-0.5" />
+                  Category and priority suggested the instant a complaint is submitted
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} style={{ color: 'var(--accent)' }} className="shrink-0 mt-0.5" />
+                  Outages and safety issues are automatically flagged as higher priority
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} style={{ color: 'var(--accent)' }} className="shrink-0 mt-0.5" />
+                  Consistent categorization across every complaint, every agent
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 size={16} style={{ color: 'var(--accent)' }} className="shrink-0 mt-0.5" />
+                  A one-line AI summary means agents grasp the issue in seconds
+                </li>
+              </ul>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 pb-20">
+        <Reveal className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+            What people are saying
+          </h2>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Sample feedback from our hackathon demo testers
+          </p>
+        </Reveal>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {[
+            {
+              quote: "I reported a voltage fluctuation and had an agent respond within the hour. The status updates kept me informed the whole time.",
+              name: 'Ayesha K.',
+              role: 'Consumer',
+            },
+            {
+              quote: "The AI-suggested priority saved me from having to read every single complaint description just to figure out what's urgent.",
+              name: 'Bilal R.',
+              role: 'Support Agent',
+            },
+            {
+              quote: "Editing a ticket and having the AI re-analyze it automatically is a small detail that makes a real difference.",
+              name: 'Sana M.',
+              role: 'Consumer',
+            },
+          ].map((t) => (
+            <Reveal key={t.name}>
+              <div
+                className="rounded-2xl p-6 h-full flex flex-col justify-between"
+                style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}
+              >
+                <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>
+                  "{t.quote}"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold"
+                    style={{ backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}
+                  >
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>{t.name}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+
       <div id="faq" className="max-w-3xl mx-auto px-6 pb-20">
         <Reveal className="text-center mb-10">
           <h2

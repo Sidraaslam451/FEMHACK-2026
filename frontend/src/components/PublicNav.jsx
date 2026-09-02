@@ -24,6 +24,7 @@ const PublicNav = () => {
       </Link>
 
       <div className="hidden md:flex items-center gap-6 text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+        <Link to="/grid-network">Grid Network</Link>
         <Link to="/live-status">Live Status</Link>
         <Link to="/about">About</Link>
         <Link to="/safety-tips">Safety Tips</Link>
